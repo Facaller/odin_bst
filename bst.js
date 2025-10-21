@@ -20,4 +20,17 @@ class Tree {
 
         return cleanArray;
     }
+
+    buildTree (array, start, end) {
+        if (start > end) return null;
+        
+        let mid = Math.floor((start + end) / 2);
+        let value = array[mid];
+
+        const rootNode = new Node(value);
+        //setLeftSide
+        //setRightSide
+
+        //return root
+    }
 }
