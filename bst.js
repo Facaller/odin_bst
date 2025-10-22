@@ -26,11 +26,11 @@ class Tree {
         
         let mid = Math.floor((start + end) / 2);
         let value = array[mid];
-
         const rootNode = new Node(value);
-        //setLeftSide
-        //setRightSide
-
-        //return root
+        
+        rootNode.left = this.buildTree(array, start, mid - 1);
+        rootNode.right = this.buildTree(array, mid + 1, end);
+        
+        return rootNode;
     }
 }
