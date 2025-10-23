@@ -9,6 +9,7 @@ class Node {
 class Tree {
     constructor (array) {
         this.array = array;
+        this.root  = this.buildTree(this.cleanArray(array));
     }
 
     cleanArray (array) {
@@ -32,5 +33,14 @@ class Tree {
         rootNode.right = this.buildTree(array, mid + 1, end);
         
         return rootNode;
+    }
+
+    insert (value) {
+        const root = this.root;
+        if (value === root) return;
+
+        if (value > root.data) {
+            
+        }
     }
 }
