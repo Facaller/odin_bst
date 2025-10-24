@@ -38,9 +38,17 @@ class Tree {
     insert (value) {
         const root = this.root;
         if (value === root) return;
+        if (root.left === null &&  value < root.data) {
+            root.left = new Node(value);
+        }
+        if (root.right === null &&  value > root.data) {
+            root.right = new Node(value);
+        }
 
-        if (value > root.data) {
-            
+        if (root.data < value) {
+            root.left.insert(value)
+        } else if (root.data > value) {
+            root.right.insert(value)
         }
     }
 }
