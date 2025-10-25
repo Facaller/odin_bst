@@ -9,7 +9,7 @@ class Node {
 class Tree {
     constructor (array) {
         this.array = array;
-        this.root  = this.buildTree(this.cleanArray(array));
+        this.root  = this.buildTree(this.cleanArray(array), 0, this.cleanArray(array).length - 1);
     }
 
     cleanArray (array) {
@@ -38,17 +38,20 @@ class Tree {
     insert (value) {
         const root = this.root;
         if (value === root) return;
-        if (root.left === null &&  value < root.data) {
+
+        if (root.left === null && value < root.data) {
             root.left = new Node(value);
+            return;
         }
-        if (root.right === null &&  value > root.data) {
+        if (root.right === null && value > root.data) {
             root.right = new Node(value);
+            return;
         }
 
         if (root.data < value) {
-            root.left.insert(value)
+            this.insert(root.left)
         } else if (root.data > value) {
-            root.right.insert(value)
+            this.insert(root.right)
         }
     }
 }
