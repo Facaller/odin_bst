@@ -35,23 +35,22 @@ class Tree {
         return rootNode;
     }
 
-    insert (value) {
-        const root = this.root;
-        if (value === root) return;
+    insert (value, node = this.root) {
+        if (value === node.data) return;
 
-        if (root.left === null && value < root.data) {
-            root.left = new Node(value);
+        if (node.left === null && value < node.data) {
+            node.left = new Node(value);
             return;
         }
-        if (root.right === null && value > root.data) {
-            root.right = new Node(value);
+        if (node.right === null && value > node.data) {
+            node.right = new Node(value);
             return;
         }
 
-        if (root.data < value) {
-            this.insert(root.left)
-        } else if (root.data > value) {
-            this.insert(root.right)
+        if (value < node.data) {
+            this.insert(value, node.left)
+        } else if (value > node.data) {
+            this.insert(value, node.right)
         }
     }
 }
