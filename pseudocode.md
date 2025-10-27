@@ -94,3 +94,37 @@ Because that’s not how class syntax in JavaScript is intended to be used.
 Here’s how class methods work:
 
 You define them outside the constructor, but still inside the class body, like this:
+
+If Using Helpers:
+
+Find the Node to Remove
+You may need a helper method to traverse the tree and locate the node to remove (since remove will likely be called with a value).
+
+Handle Each Deletion Case
+Once the node is found, you'd have helper functions for each case:
+
+Leaf node: Directly remove it.
+
+One child: Replace the node with its child.
+
+Two children: Replace the node with its in-order successor or predecessor, and handle the edge cases.
+
+Final Cleanup
+Ensure that parent pointers and child pointers are correctly updated after removal, especially in the case of nodes with children.
+
+If Keeping Everything in remove:
+
+Find the Node to Remove
+Same as above — you'd search for the node to delete.
+
+Handle Deletion Cases
+Within a single remove method, handle:
+
+Leaf Node: Just set the parent pointer to null.
+
+One Child: Set the parent's child pointer to the node's only child.
+
+Two Children: Replace with in-order successor or predecessor.
+
+Recursion
+If you're deleting a node that has children, you may need to recurse to fix parent-child relationships after the node is removed.

@@ -37,6 +37,7 @@ class Tree {
 
     insert (value, node = this.root) {
         if (value === node.data) return;
+        if (node === null) return new Node (value);
 
         if (node.left === null && value < node.data) {
             node.left = new Node(value);
@@ -52,5 +53,9 @@ class Tree {
         } else if (value > node.data) {
             this.insert(value, node.right)
         }
+    }
+
+    deleteItem (value) {
+        
     }
 }
