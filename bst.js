@@ -55,7 +55,28 @@ class Tree {
         }
     }
 
-    deleteItem (value) {
-        
+    deleteItem (value, node = this.root) {
+        if (node === null) return;
+        let tempNode;
+
+        if (node.data === value) {
+            if (node.left === null && node.right === null) {
+                node = null;
+                return;
+            }
+            
+            if (node.left !== null && node.right === null) {
+                tempNode = node.left;
+                node = null;
+                return tempNode;
+            } else if (node.left === null && node.right !== null) {
+                tempNode = node.right;
+                node = null;
+                return tempNode;
+            }
+
+            
+        }
+
     }
 }
