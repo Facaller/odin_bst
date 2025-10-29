@@ -94,37 +94,63 @@ Because that’s not how class syntax in JavaScript is intended to be used.
 Here’s how class methods work:
 
 You define them outside the constructor, but still inside the class body, like this:
+********
+Example Walkthrough of the Recursive Flow
 
-If Using Helpers:
+Here’s a mental walkthrough of how recursion and return values work when deleting a node, using the "parent reference" idea:
 
-Find the Node to Remove
-You may need a helper method to traverse the tree and locate the node to remove (since remove will likely be called with a value).
+Let’s say you have a tree that looks like this:
 
-Handle Each Deletion Case
-Once the node is found, you'd have helper functions for each case:
+        10
+       /  \
+      5    15
+     / \    
+    3   7   
 
-Leaf node: Directly remove it.
+Step 1: Deleting a node (e.g., node 5)
 
-One child: Replace the node with its child.
+Start the deletion by calling deleteItem(5, this.root).
 
-Two children: Replace the node with its in-order successor or predecessor, and handle the edge cases.
+We move to the left subtree (node = 5), find that it matches, and now we need to delete it.
 
-Final Cleanup
-Ensure that parent pointers and child pointers are correctly updated after removal, especially in the case of nodes with children.
+Since 5 has two children, we have to find the in-order successor or predecessor (not tackled here yet).
 
-If Keeping Everything in remove:
+Step 2: Node with no children (leaf node)
 
-Find the Node to Remove
-Same as above — you'd search for the node to delete.
+For a node with no children (like node 7), the recursion returns null back up to the parent:
 
-Handle Deletion Cases
-Within a single remove method, handle:
+deleteItem(7, root.left.right) — we find that node 7 is a leaf.
 
-Leaf Node: Just set the parent pointer to null.
+The return value here is null, and the parent node (5) sets its right pointer to null (i.e., it removes node 7 from the tree).
 
-One Child: Set the parent's child pointer to the node's only child.
+Step 3: Returning the new structure
 
-Two Children: Replace with in-order successor or predecessor.
+Now that we’ve returned null, node 5 will be updated by the parent call:
 
-Recursion
-If you're deleting a node that has children, you may need to recurse to fix parent-child relationships after the node is removed.
+If we were deleting 10 and 5 was its child, we would return the child (10 or null if needed) back to the parent node so that it can correctly link to its child.
+
+This is why recursion is so powerful in tree operations — the return value lets us "bubble up" the new subtree back to the parent node. That’s how the parent’s pointer gets updated.
+
+Putting It All Together
+
+With your current code, you’re modifying the node’s data (which doesn’t remove the node from the tree) and not updating the parent’s link to that node. By using recursion, you need to return a new value that the parent can then use to update its reference.
+
+If you want to take this one step further, you would modify your recursion to do something like this:
+
+When deleting a node:
+
+If it's a leaf node, return null (because its parent will need to set the link to null).
+
+If it has one child, return that child node (so the parent can link to the child).
+
+If it has two children, you'll handle that later with the in-order successor or predecessor approach.
+
+Final Thoughts:
+
+To recap:
+
+Yes, you'll need to pass the parent node (either as an additional parameter or through a helper function) to update the reference to the node you're deleting.
+
+You don’t need to set node.data = null — you just need to update the parent’s link to point to null or to the child node, depending on the case.
+
+The return value is key because it tells the parent how to update its reference as the recursion returns.

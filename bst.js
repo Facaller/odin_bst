@@ -54,28 +54,30 @@ class Tree {
             this.insert(value, node.right)
         }
     }
-
+// delete from parent, not the node itself. So we need a reference to the parent
     deleteItem (value, node = this.root) {
         if (node === null) return;
         let tempNode;
 
         if (node.data === value) {
             if (node.left === null && node.right === null) {
-                node = null;
-                return;
+                node.data = null;
+                return node;
             }
             
             if (node.left !== null && node.right === null) {
                 tempNode = node.left;
-                node = null;
+                node.data = null;
                 return tempNode;
             } else if (node.left === null && node.right !== null) {
                 tempNode = node.right;
-                node = null;
+                node.data = null;
                 return tempNode;
             }
 
-            
+            if (node.left === null && node.right === null) {
+
+            }
         }
 
     }
