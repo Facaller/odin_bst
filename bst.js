@@ -56,7 +56,7 @@ class Tree {
     }
 // delete from parent, not the node itself. So we need a reference to the parent
     deleteItem (value, node = this.root) {
-        if (node === null) return;
+        if (node === null) return node;
         let tempNode;
 
         if (node.data === value) {
