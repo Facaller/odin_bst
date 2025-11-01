@@ -58,7 +58,15 @@ class Tree {
     deleteItem (value, node = this.root, parent = null) {
         if (node === null) return null;
         
+        if (value === node.data) {
+        
+        }
 
-            
+        if (value < node.data) {
+            this.deleteItem(value, node.left, node.data)
+        }
+        if (value > node.data) {
+            this.deleteItem(value, node.right, node.data)
+        }
     }
 }
