@@ -57,16 +57,39 @@ class Tree {
 // delete from parent, not the node itself. So we need a reference to the parent
     deleteItem (value, node = this.root, parent = null) {
         if (node === null) return null;
+        let tempNode = null;
         
         if (value === node.data) {
-        
+            if (node.left === null && node.right === null) {
+                if (parent.left === node) {
+                    parent.left = null;
+                } else {
+                    parent.right = null
+                }
+                return;
+            }
+
+            if (node.left === null || node.right === null) {
+                tempNode = node.left || node.right;
+                
+                if (parent.left === node) {
+                    parent.left = tempNode;
+                } else {
+                    parent.right = tempNode
+                }
+                return;
+            }
+
+            if () {
+                
+            }
         }
 
         if (value < node.data) {
-            this.deleteItem(value, node.left, node.data)
+            this.deleteItem(value, node.left, node)
         }
         if (value > node.data) {
-            this.deleteItem(value, node.right, node.data)
+            this.deleteItem(value, node.right, node)
         }
     }
 }
