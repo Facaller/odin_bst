@@ -95,3 +95,67 @@ Here’s how class methods work:
 
 You define them outside the constructor, but still inside the class body, like this:
 ********
+
+What is Happening in the Code?
+
+Here’s the method for finding the inorder successor again:
+
+findInorderSuccessor(node) {
+    let current = node.right; // Start by going to the right child
+    while (current && current.left) { // Keep going left as long as we can
+        current = current.left;
+    }
+    return current; // When we reach the leftmost node, return it
+}
+
+
+Let’s break it down:
+
+let current = node.right;
+The first step is to look at the right child of the node you are deleting. Why? Because the inorder successor is always in the right subtree of the node you're trying to delete. So we start by moving to the right.
+
+while (current && current.left) {
+Now that we are at the right child, we want to keep moving left as long as possible. The reason we do this is because the inorder successor is always the leftmost node of the right subtree. So, as long as there’s a node with a left child, we keep moving left.
+
+current = current.left;
+This line moves us to the left child. We repeat this step until we reach a node that has no left child, which will be the leftmost node in that subtree — the inorder successor.
+
+return current;
+When we find that there’s no left child anymore, current will be the inorder successor, and we return that node.
+
+Why This Approach Works
+
+The reason this works is that in an inorder traversal, you visit the left child first, then the node itself, and then the right child. The inorder successor is the next node that would be visited in this traversal. This happens to be the leftmost node of the right subtree, as it’s the smallest node greater than the node you’re deleting.
+
+Rewriting the Code in a More Explicit Way
+
+I understand that you're trying to keep things clear and explicit. Let's rewrite this logic in a way that’s closer to your current style:
+
+findInorderSuccessor(node) {
+    // First, we need to check if the node has a right child.
+    if (node.right !== null) {
+        // If the node has a right child, go to that right child.
+        let successor = node.right;
+
+        // Now, we need to keep moving left until we reach the leftmost node.
+        while (successor.left !== null) {
+            // Move left
+            successor = successor.left;
+        }
+
+        // Once we've found the leftmost node, return it as the successor.
+        return successor;
+    }
+
+    // If the node does not have a right child, there is no inorder successor in this case.
+    // (In your delete method, this case isn't needed, since we only handle nodes with 2 children.)
+    return null;
+}
+
+Key Changes to Make It More Explicit
+
+Checking the right child: We explicitly check if node.right exists first, just to make it clearer that we are looking for the inorder successor in the right subtree.
+
+Using successor: Instead of just naming the variable current, we use successor to make it clear that this is the node we are looking for.
+
+While loop condition: Instead of checking current && current.left, we specifically check if successor.left !== null — it’s more explicit about what we’re checking (that we want to keep moving left until we hit a node with no left child).

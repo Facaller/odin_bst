@@ -80,9 +80,7 @@ class Tree {
                 return;
             }
 
-            if () {
-                
-            }
+            
         }
 
         if (value < node.data) {
