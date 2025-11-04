@@ -159,3 +159,29 @@ Checking the right child: We explicitly check if node.right exists first, just t
 Using successor: Instead of just naming the variable current, we use successor to make it clear that this is the node we are looking for.
 
 While loop condition: Instead of checking current && current.left, we specifically check if successor.left !== null — it’s more explicit about what we’re checking (that we want to keep moving left until we hit a node with no left child).
+
+
+******
+
+You’re not actually replacing the node’s value.
+When you find the successor, you do node = tempNode;.
+That just reassigns the local variable node, not the actual node in the tree. The real node in the tree remains unchanged. You need to copy the successor’s data into node, then delete the successor node from the right subtree.
+
+Your findSuccessor method doesn’t use the current node.
+It tries to access a variable node that isn’t defined in its scope. You’re not passing in which node’s successor you’re looking for. It should accept the node as an argument so it can look at node.right.
+
+You never delete the successor after copying its value.
+Once you replace the target node’s value with its successor’s, the successor still exists in the right subtree. You must delete that successor node to avoid duplicates.
+
+Parent reassignment only happens for the original node.
+Because you replace node = tempNode instead of updating pointers or values correctly, your parent references are not updated as you think they are.
+
+In short:
+
+The line node = tempNode doesn’t modify the tree.
+
+findSuccessor needs access to the node whose successor you’re finding.
+
+After copying the successor’s data, you still need to delete that successor from the right subtree.
+
+Fix those conceptual points, and your two-children case will start behaving correctly.
