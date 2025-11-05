@@ -80,8 +80,9 @@ class Tree {
                 return;
             }
 
-            tempNode = this.findSuccessor();
-            node = tempNode;
+            tempNode = this.findSuccessor(node);
+            node.data = tempNode.data;
+            this.deleteItem(tempNode.data, node.right, node)
         }
 
         if (value < node.data) {
@@ -92,7 +93,7 @@ class Tree {
         }
     }
 
-    findSuccessor () {
+    findSuccessor (node) {
         let successor = node.right;
         while (successor && successor.left) {
             successor = successor.left;
