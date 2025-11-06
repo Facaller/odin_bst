@@ -1,187 +1,142 @@
-Step-by-Step Plan to Build a Binary Search Tree
-1. Fix the Node constructor
+Adding the Edge Case for Root Node Deletion
 
-You’ll want to make sure each node stores:
+When you're deleting the root node, you want to ensure that the root property of the Tree class gets updated appropriately, especially when the root node has no parent (i.e., it's null in the deleteItem method).
 
-The data.
+Let’s go over how to modify the deleteItem method to handle the case where the root node is the one being deleted.
 
-A left child (another node or null).
+Steps for Handling Root Deletion:
 
-A right child (same).
+Detect if the node to delete is the root:
 
-Think about what left and right should default to when you create a new node. You don’t need to fix this now, just be aware that your constructor needs to support that.
+The parent parameter will be null when you're attempting to delete the root node.
 
-2. Clean & Prepare the Input Array
+Update the root:
 
-In your Tree class constructor, you're receiving an array. A BST must be built from a sorted and unique array to ensure it's balanced.
+If the root node is being deleted, you'll need to set this.root to the correct new root, depending on whether the root has no children, one child, or two children.
 
-So, your first internal step will be to:
+Modifying the deleteItem Method
 
-Remove duplicates from the array.
+We'll adjust the code so that if the root is deleted, we properly set this.root to the new root.
 
-Sort the array in ascending order.
-
-This becomes your source for building a balanced BST.
-
-3. Build the Tree
-
-Create a method inside the Tree class (often called buildTree) that:
-
-Takes the sorted array.
-
-Recursively builds a balanced BST by:
-
-Choosing the middle element as the root.
-
-Building the left subtree from the left half.
-
-Building the right subtree from the right half.
-
-This is a core recursive algorithm. No code yet — but try to picture how the middle becomes the root, and how that splits the problem smaller each time.
-
-4. Set the Root of the Tree
-
-After building the tree with your buildTree method, store the root node as a property of the Tree class (e.g. this.root), so you can access it later.
-
-5. Add Utility Methods to the Tree
-
-After you’ve built the tree, you’ll want to add typical BST functionality, like:
-
-Basic Operations:
-
-insert(value) — to add a value to the tree.
-
-delete(value) — to remove a value.
-
-find(value) — to find and return the node with that value.
-
-These will require recursive logic and careful handling of edge cases (e.g., deleting a node with two children).
-
-6. Tree Traversal Methods
-
-Add different ways to traverse the tree:
-
-Level-order (breadth-first)
-
-Pre-order (root, left, right)
-
-In-order (left, root, right)
-
-Post-order (left, right, root)
-
-Each of these helps in different contexts — e.g., in-order traversal of a BST gives sorted values.
-
-7. Height & Depth
-
-Add methods to calculate:
-
-The height of a node (longest path to a leaf).
-
-The depth of a node (distance from the root).
-
-Understanding these will help you later when balancing trees.
-
-8. Balance Check & Rebalancing
-
-You’ll want to:
-
-Add a method to check if the tree is balanced (i.e., the height difference between left and right subtrees is ≤ 1).
-
-If it's unbalanced, add a rebalance() method to rebuild it using an in-order traversal (i.e., sorted array again).
-
-Because that’s not how class syntax in JavaScript is intended to be used.
-
-Here’s how class methods work:
-
-You define them outside the constructor, but still inside the class body, like this:
-********
-
-What is Happening in the Code?
-
-Here’s the method for finding the inorder successor again:
-
-findInorderSuccessor(node) {
-    let current = node.right; // Start by going to the right child
-    while (current && current.left) { // Keep going left as long as we can
-        current = current.left;
-    }
-    return current; // When we reach the leftmost node, return it
-}
-
-
-Let’s break it down:
-
-let current = node.right;
-The first step is to look at the right child of the node you are deleting. Why? Because the inorder successor is always in the right subtree of the node you're trying to delete. So we start by moving to the right.
-
-while (current && current.left) {
-Now that we are at the right child, we want to keep moving left as long as possible. The reason we do this is because the inorder successor is always the leftmost node of the right subtree. So, as long as there’s a node with a left child, we keep moving left.
-
-current = current.left;
-This line moves us to the left child. We repeat this step until we reach a node that has no left child, which will be the leftmost node in that subtree — the inorder successor.
-
-return current;
-When we find that there’s no left child anymore, current will be the inorder successor, and we return that node.
-
-Why This Approach Works
-
-The reason this works is that in an inorder traversal, you visit the left child first, then the node itself, and then the right child. The inorder successor is the next node that would be visited in this traversal. This happens to be the leftmost node of the right subtree, as it’s the smallest node greater than the node you’re deleting.
-
-Rewriting the Code in a More Explicit Way
-
-I understand that you're trying to keep things clear and explicit. Let's rewrite this logic in a way that’s closer to your current style:
-
-findInorderSuccessor(node) {
-    // First, we need to check if the node has a right child.
-    if (node.right !== null) {
-        // If the node has a right child, go to that right child.
-        let successor = node.right;
-
-        // Now, we need to keep moving left until we reach the leftmost node.
-        while (successor.left !== null) {
-            // Move left
-            successor = successor.left;
+Updated Code:
+deleteItem(value, node = this.root, parent = null) {
+    if (node === null) return null;
+    let tempNode = null;
+    
+    // Detect if we're deleting the root node
+    const isRoot = parent === null;
+    
+    if (value === node.data) {
+        if (node.left === null && node.right === null) {
+            // Case 1: Node has no children (leaf node)
+            if (isRoot) {
+                this.root = null;  // If it's the root, set root to null
+            } else {
+                if (parent.left === node) {
+                    parent.left = null;
+                } else {
+                    parent.right = null;
+                }
+            }
+            return;
         }
 
-        // Once we've found the leftmost node, return it as the successor.
-        return successor;
+        if (node.left === null || node.right === null) {
+            // Case 2: Node has one child
+            tempNode = node.left || node.right;
+            
+            if (isRoot) {
+                this.root = tempNode;  // If it's the root, update the root to the child node
+            } else {
+                if (parent.left === node) {
+                    parent.left = tempNode;
+                } else {
+                    parent.right = tempNode;
+                }
+            }
+            return;
+        }
+
+        // Case 3: Node has two children
+        tempNode = this.findSuccessor(node);
+        node.data = tempNode.data;
+        this.deleteItem(tempNode.data, node.right, node);
     }
 
-    // If the node does not have a right child, there is no inorder successor in this case.
-    // (In your delete method, this case isn't needed, since we only handle nodes with 2 children.)
-    return null;
+    // Recurse left or right based on comparison
+    if (value < node.data) {
+        this.deleteItem(value, node.left, node);
+    }
+    if (value > node.data) {
+        this.deleteItem(value, node.right, node);
+    }
 }
 
-Key Changes to Make It More Explicit
+Explanation of the Updates:
 
-Checking the right child: We explicitly check if node.right exists first, just to make it clearer that we are looking for the inorder successor in the right subtree.
+Detecting Root Node Deletion:
 
-Using successor: Instead of just naming the variable current, we use successor to make it clear that this is the node we are looking for.
+We added a check const isRoot = parent === null; at the beginning of the function to detect if the parent is null (which indicates that the node being deleted is the root).
 
-While loop condition: Instead of checking current && current.left, we specifically check if successor.left !== null — it’s more explicit about what we’re checking (that we want to keep moving left until we hit a node with no left child).
+Handling the Case Where Root is Deleted:
+
+When the root node has no children (leaf node), we set this.root = null;.
+
+If the root node has one child, we update the root by setting this.root = tempNode; where tempNode is either the left or right child of the root.
+
+If the root node has two children, we replace its value with the in-order successor (as usual) and recursively delete the successor.
+
+Examples of Root Deletion:
+Case 1: Root Node Has No Children
+
+Let's say the root node is 8, and it has no children:
+
+  8
 
 
-******
+When you call deleteItem(8), since the node has no children, we just set this.root = null to remove the root. The tree becomes empty:
 
-You’re not actually replacing the node’s value.
-When you find the successor, you do node = tempNode;.
-That just reassigns the local variable node, not the actual node in the tree. The real node in the tree remains unchanged. You need to copy the successor’s data into node, then delete the successor node from the right subtree.
+  null
 
-Your findSuccessor method doesn’t use the current node.
-It tries to access a variable node that isn’t defined in its scope. You’re not passing in which node’s successor you’re looking for. It should accept the node as an argument so it can look at node.right.
+Case 2: Root Node Has One Child
 
-You never delete the successor after copying its value.
-Once you replace the target node’s value with its successor’s, the successor still exists in the right subtree. You must delete that successor node to avoid duplicates.
+Let’s say the root is 8, and it has only a right child (10):
 
-Parent reassignment only happens for the original node.
-Because you replace node = tempNode instead of updating pointers or values correctly, your parent references are not updated as you think they are.
+  8
+   \
+   10
 
-In short:
 
-The line node = tempNode doesn’t modify the tree.
+When you call deleteItem(8), since the node has one child, we set the root to the right child (10):
 
-findSuccessor needs access to the node whose successor you’re finding.
+  10
 
-After copying the successor’s data, you still need to delete that successor from the right subtree.
+Case 3: Root Node Has Two Children
 
-Fix those conceptual points, and your two-children case will start behaving correctly.
+Now, let’s say the root is 8, and it has two children (3 and 10):
+
+       8
+     /   \
+    3     10
+
+
+When you call deleteItem(8), we find the in-order successor (the smallest node in the right subtree, which is 10). We replace the root node 8 with 10, and then recursively delete the successor (10). After deletion, the tree looks like this:
+
+    10
+   /
+  3
+
+
+Notice how we correctly handled the root replacement and updated the root reference (this.root).
+
+Recap: Key Changes for Root Deletion
+
+We use the parent === null check to determine if the node being deleted is the root.
+
+We make sure to correctly update this.root when deleting the root:
+
+No children: Set this.root = null.
+
+One child: Set this.root = node.left or this.root = node.right depending on which child exists.
+
+Two children: Replace the root's data with the in-order successor, and recursively delete the successor node.
