@@ -58,13 +58,18 @@ class Tree {
     deleteItem (value, node = this.root, parent = null) {
         if (node === null) return null;
         let tempNode = null;
+        const isRoot = parent === null;
         
         if (value === node.data) {
             if (node.left === null && node.right === null) {
-                if (parent.left === node) {
-                    parent.left = null;
+                if (isRoot) {
+                    this.root = null;
                 } else {
-                    parent.right = null
+                    if (parent.left === node) {
+                        parent.left = null;
+                    } else {
+                        parent.right = null
+                    }
                 }
                 return;
             }
@@ -72,10 +77,14 @@ class Tree {
             if (node.left === null || node.right === null) {
                 tempNode = node.left || node.right;
                 
-                if (parent.left === node) {
-                    parent.left = tempNode;
+                if (isRoot) {
+                    this.root = tempNode;
                 } else {
-                    parent.right = tempNode
+                    if (parent.left === node) {
+                        parent.left = tempNode;
+                    } else {
+                        parent.right = tempNode
+                    }
                 }
                 return;
             }
@@ -99,5 +108,16 @@ class Tree {
             successor = successor.left;
         }
         return successor
+    }
+
+    find (value, node = this.root) {
+        if (value === node.data) return node;
+        if (node === null) return null;
+
+        if (value < node.data) {
+            return this.find(node.left);
+        } else {
+            return this.find(node.right);
+        }
     }
 }
