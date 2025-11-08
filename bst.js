@@ -120,4 +120,28 @@ class Tree {
             return this.find(node.right);
         }
     }
+
+    levelOrderForEach (callback, node = this.root) {
+        if (node === null) return null;
+        if (!callback) throw new Error ('Callback required');
+
+        const queue = [];
+        const current = queue[0];
+        
+        queue.push(node);
+
+        if (queue.length !== 0) {
+            console.log(current);
+
+            if (node.left !== null) {
+                queue.push(current.left);
+                return this.levelOrderForEach(current, node.left);
+            }
+            if (node.right !== null) {
+                queue.push(current.right);
+                return this.levelOrderForEach(current, node.right);
+            }
+            queue.pop(0);
+        }
+    }
 }
