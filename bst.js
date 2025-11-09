@@ -126,22 +126,38 @@ class Tree {
         if (!callback) throw new Error ('Callback required');
 
         const queue = [];
-        const current = queue[0];
-        
         queue.push(node);
 
-        if (queue.length !== 0) {
-            console.log(current);
+        while (queue.length !== 0) {
+            const current = queue[0];
+            callback(current);
 
-            if (node.left !== null) {
-                queue.push(current.left);
-                return this.levelOrderForEach(current, node.left);
-            }
-            if (node.right !== null) {
-                queue.push(current.right);
-                return this.levelOrderForEach(current, node.right);
-            }
-            queue.pop(0);
+            if (current.left !== null) queue.push(current.left);
+            if (current.right !== null) queue.push(current.right);
+            queue.shift();
         }
+    }
+
+    inOrderForEach (callback, node = this.root) {
+        if (node === null) return null;
+        if (!callback) throw new Error ('Callback required');
+
+        if (node.left !== null) {
+            callback(node.data);
+            return this.inOrderForEach(callback, node.left);
+        } else {
+            callback(node.data);
+            return this.inOrderForEach(callback, node.right);
+        }
+    }
+
+    preOrderForEach (callback, node = this.root) {
+        if (node === null) return null;
+        if (!callback) throw new Error ('Callback required');
+    }
+
+    postOrderForEach (callback, node = this.root) {
+        if (node === null) return null;
+        if (!callback) throw new Error ('Callback required');
     }
 }
