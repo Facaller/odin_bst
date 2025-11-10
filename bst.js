@@ -122,8 +122,8 @@ class Tree {
     }
 
     levelOrderForEach (callback, node = this.root) {
-        if (node === null) return null;
         if (!callback) throw new Error ('Callback required');
+        if (node === null) return null;
 
         const queue = [];
         queue.push(node);
@@ -139,25 +139,34 @@ class Tree {
     }
 
     inOrderForEach (callback, node = this.root) {
-        if (node === null) return null;
         if (!callback) throw new Error ('Callback required');
-
-        if (node.left !== null) {
-            callback(node.data);
-            return this.inOrderForEach(callback, node.left);
-        } else {
-            callback(node.data);
-            return this.inOrderForEach(callback, node.right);
-        }
+        if (node === null) return null;
+        
+        this.inOrderForEach(callback, node.left);
+        callback(node.data);
+        this.inOrderForEach(callback, node.right);
     }
 
     preOrderForEach (callback, node = this.root) {
-        if (node === null) return null;
         if (!callback) throw new Error ('Callback required');
+        if (node === null) return null;
+
+        callback(node.data);
+        this.preOrderForEach(callback, node.left);
+        this.preOrderForEach(callback, node.right);
     }
 
     postOrderForEach (callback, node = this.root) {
-        if (node === null) return null;
         if (!callback) throw new Error ('Callback required');
+        if (node === null) return null;
+
+        this.postOrderForEach(callback, node.left);
+        this.postOrderForEach(callback, node.right);
+        callback(node.data);
+    }
+
+    height (value, node = this.root) {
+        if (value === null) return null;
+        
     }
 }

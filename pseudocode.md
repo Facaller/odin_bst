@@ -1,142 +1,110 @@
-Adding the Edge Case for Root Node Deletion
+Understanding the Logic for height(value)
 
-When you're deleting the root node, you want to ensure that the root property of the Tree class gets updated appropriately, especially when the root node has no parent (i.e., it's null in the deleteItem method).
+To implement the height(value) method, here's the step-by-step process and logic you can use to determine the height of the node containing a given value:
 
-Let’s go over how to modify the deleteItem method to handle the case where the root node is the one being deleted.
+Step 1: Finding the node
 
-Steps for Handling Root Deletion:
+First, you need to find the node that contains the given value. If the value is not found in the tree, you should return null because the node doesn’t exist.
 
-Detect if the node to delete is the root:
+If the value matches the current node’s data, then you’ve found the node.
 
-The parent parameter will be null when you're attempting to delete the root node.
+If the value is less than the current node's data, you’ll search the left subtree.
 
-Update the root:
+If the value is greater than the current node's data, you’ll search the right subtree.
 
-If the root node is being deleted, you'll need to set this.root to the correct new root, depending on whether the root has no children, one child, or two children.
+Step 2: Base case for height calculation
 
-Modifying the deleteItem Method
+Once you've found the node, you need to determine the height of that node.
 
-We'll adjust the code so that if the root is deleted, we properly set this.root to the new root.
+If a node doesn’t have any children (i.e., it's a leaf node), its height is 0. This is because there are no edges to any other nodes.
 
-Updated Code:
-deleteItem(value, node = this.root, parent = null) {
-    if (node === null) return null;
-    let tempNode = null;
-    
-    // Detect if we're deleting the root node
-    const isRoot = parent === null;
-    
-    if (value === node.data) {
-        if (node.left === null && node.right === null) {
-            // Case 1: Node has no children (leaf node)
-            if (isRoot) {
-                this.root = null;  // If it's the root, set root to null
-            } else {
-                if (parent.left === node) {
-                    parent.left = null;
-                } else {
-                    parent.right = null;
-                }
-            }
-            return;
-        }
+Step 3: Recursive calculation of height
 
-        if (node.left === null || node.right === null) {
-            // Case 2: Node has one child
-            tempNode = node.left || node.right;
-            
-            if (isRoot) {
-                this.root = tempNode;  // If it's the root, update the root to the child node
-            } else {
-                if (parent.left === node) {
-                    parent.left = tempNode;
-                } else {
-                    parent.right = tempNode;
-                }
-            }
-            return;
-        }
+To find the height of any node that isn't a leaf, you need to calculate the height of its left and right subtrees, and then take the larger of the two heights, because the longest path (which defines height) can either go left or right. Once you know the maximum height of the two subtrees, add 1 to it to count the edge from the node to its child.
 
-        // Case 3: Node has two children
-        tempNode = this.findSuccessor(node);
-        node.data = tempNode.data;
-        this.deleteItem(tempNode.data, node.right, node);
-    }
+Step 4: Handling subtrees
 
-    // Recurse left or right based on comparison
-    if (value < node.data) {
-        this.deleteItem(value, node.left, node);
-    }
-    if (value > node.data) {
-        this.deleteItem(value, node.right, node);
-    }
-}
+To calculate the height of any node, you need to call the same height function recursively on both the left and right child nodes. Here’s how it looks:
 
-Explanation of the Updates:
+If there’s no left or right child, return -1 (which indicates no path, like a null subtree).
 
-Detecting Root Node Deletion:
+If there is a left or right child, recursively calculate the height of those child nodes and use the maximum of the two.
 
-We added a check const isRoot = parent === null; at the beginning of the function to detect if the parent is null (which indicates that the node being deleted is the root).
+Once you get the maximum height from the left and right subtrees, add 1 for the current node to account for the edge to that child.
 
-Handling the Case Where Root is Deleted:
+Step 5: Recursive call structure
 
-When the root node has no children (leaf node), we set this.root = null;.
+The recursion continues down the tree until you reach leaf nodes, and the heights start getting calculated from the leaf nodes back up to the original node.
 
-If the root node has one child, we update the root by setting this.root = tempNode; where tempNode is either the left or right child of the root.
+🌳 Example Walkthrough
 
-If the root node has two children, we replace its value with the in-order successor (as usual) and recursively delete the successor.
+Let’s walk through an example to help visualize it.
 
-Examples of Root Deletion:
-Case 1: Root Node Has No Children
+Consider this tree:
 
-Let's say the root node is 8, and it has no children:
-
-  8
+        10
+       /  \
+      5    15
+     / \     \
+    3   7     20
 
 
-When you call deleteItem(8), since the node has no children, we just set this.root = null to remove the root. The tree becomes empty:
+We want to calculate the height of the node containing 5.
 
-  null
+Step 1: Find the node
 
-Case 2: Root Node Has One Child
+We start at the root (10). Since 5 is less than 10, we go to the left child (5).
 
-Let’s say the root is 8, and it has only a right child (10):
+We’ve found the node, so now we calculate its height.
 
-  8
-   \
-   10
+Step 2: Check if it’s a leaf
 
+Node 5 is not a leaf — it has two children: 3 (left) and 7 (right). So we need to calculate the height of the left and right subtrees of node 5.
 
-When you call deleteItem(8), since the node has one child, we set the root to the right child (10):
+Step 3: Calculate height of left and right subtrees
 
-  10
+Left Subtree (Node 3):
 
-Case 3: Root Node Has Two Children
+Node 3 is a leaf (no children), so its height is 0.
 
-Now, let’s say the root is 8, and it has two children (3 and 10):
+Right Subtree (Node 7):
 
-       8
-     /   \
-    3     10
+Node 7 is also a leaf (no children), so its height is 0.
 
+Step 4: Calculate the height of node 5
 
-When you call deleteItem(8), we find the in-order successor (the smallest node in the right subtree, which is 10). We replace the root node 8 with 10, and then recursively delete the successor (10). After deletion, the tree looks like this:
+The height of node 5 is the maximum of the left and right subtree heights plus 1. So:
 
-    10
-   /
-  3
+Left height = 0 (from node 3)
 
+Right height = 0 (from node 7)
 
-Notice how we correctly handled the root replacement and updated the root reference (this.root).
+The height of node 5 = max(0, 0) + 1 = 1.
 
-Recap: Key Changes for Root Deletion
+So, the height of node 5 is 1.
 
-We use the parent === null check to determine if the node being deleted is the root.
+Step 5: Apply recursively for other nodes
 
-We make sure to correctly update this.root when deleting the root:
+If you were calculating the height for node 10, you would continue this process, recursively finding the heights of its subtrees (left and right), and calculate its height by taking the maximum of both subtrees' heights and adding 1.
 
-No children: Set this.root = null.
+🧩 Key Insights
 
-One child: Set this.root = node.left or this.root = node.right depending on which child exists.
+Leaf nodes always have a height of 0.
 
-Two children: Replace the root's data with the in-order successor, and recursively delete the successor node.
+The height of a node is determined by the height of the tallest child (left or right) + 1 for the edge to that child.
+
+You need to recursively check the left and right subtrees, calculate their heights, and then compute the height of the current node.
+
+🧠 Pseudo-steps for height function:
+
+Find the node with the given value (using the BST search logic).
+
+If the node is not found, return null.
+
+If the node is found:
+
+If it's a leaf, return 0.
+
+Otherwise, recursively calculate the height of the left and right subtrees.
+
+Return max(leftHeight, rightHeight) + 1.
