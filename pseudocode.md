@@ -1,110 +1,126 @@
-Understanding the Logic for height(value)
+🧩 Step 1: Clarify what “height” means
 
-To implement the height(value) method, here's the step-by-step process and logic you can use to determine the height of the node containing a given value:
+Height of a node = number of edges on the longest path from that node down to a leaf.
+So:
 
-Step 1: Finding the node
+A leaf node has height 0.
 
-First, you need to find the node that contains the given value. If the value is not found in the tree, you should return null because the node doesn’t exist.
+A null (nonexistent) child can be thought of as contributing -1 (or 0, depending on convention).
 
-If the value matches the current node’s data, then you’ve found the node.
+Height = 1 + max(left height, right height).
 
-If the value is less than the current node's data, you’ll search the left subtree.
+🧭 Step 2: Split your task into two phases
 
-If the value is greater than the current node's data, you’ll search the right subtree.
+Your function is trying to do two separate things:
 
-Step 2: Base case for height calculation
+Search phase: Find the node whose data matches the value given.
 
-Once you've found the node, you need to determine the height of that node.
+Height phase: Once found, calculate how tall its subtree is.
 
-If a node doesn’t have any children (i.e., it's a leaf node), its height is 0. This is because there are no edges to any other nodes.
+Right now, your code mixes the two — it keeps passing the same value down even after it’s found the node, which causes the recursion to go in circles.
 
-Step 3: Recursive calculation of height
+🪜 Step 3: In the “search” part, only recurse until you find the node
 
-To find the height of any node that isn't a leaf, you need to calculate the height of its left and right subtrees, and then take the larger of the two heights, because the longest path (which defines height) can either go left or right. Once you know the maximum height of the two subtrees, add 1 to it to count the edge from the node to its child.
+So:
 
-Step 4: Handling subtrees
+If the current node’s data is greater than the value → go left.
 
-To calculate the height of any node, you need to call the same height function recursively on both the left and right child nodes. Here’s how it looks:
+If smaller → go right.
 
-If there’s no left or right child, return -1 (which indicates no path, like a null subtree).
+If equal → stop searching — you’ve found the node you care about.
+At that point, don’t recurse by searching again. Instead, start measuring.
 
-If there is a left or right child, recursively calculate the height of those child nodes and use the maximum of the two.
+So far, your “search” part is almost right — you just need to make sure it returns the result of the recursive call (not just calls it).
 
-Once you get the maximum height from the left and right subtrees, add 1 for the current node to account for the edge to that child.
+🌿 Step 4: Once you find the node, measure its height
 
-Step 5: Recursive call structure
+Now you switch modes — you’re no longer comparing values.
+From here:
 
-The recursion continues down the tree until you reach leaf nodes, and the heights start getting calculated from the leaf nodes back up to the original node.
+You look at the node’s left and right children.
 
-🌳 Example Walkthrough
+For each one, you recursively determine its height.
 
-Let’s walk through an example to help visualize it.
+If the child is null, you return -1 (or 0 if you prefer).
 
-Consider this tree:
+Otherwise, the recursion gives you how tall that subtree is.
 
-        10
-       /  \
-      5    15
-     / \     \
-    3   7     20
+Take the greater of those two heights.
+
+Add 1 (for the current node).
+
+This gives you the height of the current node.
+
+⚠️ Step 5: Don’t manually increment counters
+
+Your instinct to create leftHeight and rightHeight variables is good — but you shouldn’t increment them manually.
+Instead, those variables should hold the return value from the recursive calls that measure height.
+
+So think of it like:
+
+“Let’s ask the left subtree how tall it is.”
+
+“Let’s ask the right subtree how tall it is.”
+
+“Take the taller one and add one for myself.”
+
+🧠 Step 6: Return the height value
+
+Every recursive call must return something — not just compute it.
+If you forget to return the result of a recursive call, the parent function won’t get the value back, and your recursion will “die” early (returning undefined).
+
+So, make sure both:
+
+The search phase returns the recursive result when recursing left/right.
+
+The measurement phase returns its calculated height.
+
+🌳 Step 7: Test your mental model
+
+Try walking through an example in your head:
+Let’s say your tree is like this:
+
+      8
+     / \
+    4   12
+   / \
+  2   6
 
 
-We want to calculate the height of the node containing 5.
+If you call height(4):
 
-Step 1: Find the node
+You search: 4 < 8 → go left, find node 4.
 
-We start at the root (10). Since 5 is less than 10, we go to the left child (5).
+At node 4:
 
-We’ve found the node, so now we calculate its height.
+Left child = node 2 → height = 0
 
-Step 2: Check if it’s a leaf
+Right child = node 6 → height = 0
 
-Node 5 is not a leaf — it has two children: 3 (left) and 7 (right). So we need to calculate the height of the left and right subtrees of node 5.
+So node 4’s height = 1 + max(0, 0) = 1
 
-Step 3: Calculate height of left and right subtrees
+If you call height(8):
 
-Left Subtree (Node 3):
+Found root immediately.
 
-Node 3 is a leaf (no children), so its height is 0.
+Left subtree (rooted at 4) has height 1.
 
-Right Subtree (Node 7):
+Right subtree (rooted at 12) has height 0.
 
-Node 7 is also a leaf (no children), so its height is 0.
+So node 8’s height = 1 + max(1, 0) = 2.
 
-Step 4: Calculate the height of node 5
+✅ Step 8: Summarize adjustments
 
-The height of node 5 is the maximum of the left and right subtree heights plus 1. So:
+To fix your method:
 
-Left height = 0 (from node 3)
+Keep the search phase as it is — but make sure to return when you recurse.
 
-Right height = 0 (from node 7)
+Once you find the node:
 
-The height of node 5 = max(0, 0) + 1 = 1.
+Don’t keep passing the value into recursive calls.
 
-So, the height of node 5 is 1.
+Instead, start measuring height using the node’s children.
 
-Step 5: Apply recursively for other nodes
+Measure height by returning 1 + max(height(left), height(right)).
 
-If you were calculating the height for node 10, you would continue this process, recursively finding the heights of its subtrees (left and right), and calculate its height by taking the maximum of both subtrees' heights and adding 1.
-
-🧩 Key Insights
-
-Leaf nodes always have a height of 0.
-
-The height of a node is determined by the height of the tallest child (left or right) + 1 for the edge to that child.
-
-You need to recursively check the left and right subtrees, calculate their heights, and then compute the height of the current node.
-
-🧠 Pseudo-steps for height function:
-
-Find the node with the given value (using the BST search logic).
-
-If the node is not found, return null.
-
-If the node is found:
-
-If it's a leaf, return 0.
-
-Otherwise, recursively calculate the height of the left and right subtrees.
-
-Return max(leftHeight, rightHeight) + 1.
+Always return results from recursion.
