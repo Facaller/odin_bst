@@ -166,28 +166,16 @@ class Tree {
     }
 
     height (value, node = this.root) {
-        if (value === null) return null;
-        if (value < node.data) return this.height(value, node.left);
-        if (value > node.data) return this.height(value, node.right);
-        const nodeHeight = 0;
+        if (value === null) return -1;
 
         if (value === node.data) {
-            const leftHeight = 0;
-            const righttHeight = 0;
+            const leftHeight = this.height(value, node.left);
+            const righttHeight = this.height(value, node.right);
 
-            if (node.left === null && node.right === null) {
-                return nodeHeight;
-            }
-
-            if (node.left !== null) {
-                leftHeight++;
-                this.height(value, node.left);
-            } else if (node.right !== null) {
-                righttHeight++;
-                this.height(value, node.right);
-            }
-
-            return nodeHeight = max(leftHeight, righttHeight) + 1
+            return Math.max(leftHeight, righttHeight) + 1;
         }
+
+        if (value < node.data) return this.height(value, node.left);
+        if (value > node.data) return this.height(value, node.right);
     }
 }
