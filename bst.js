@@ -178,4 +178,26 @@ class Tree {
         if (value < node.data) return this.height(value, node.left);
         if (value > node.data) return this.height(value, node.right);
     }
+
+    depth (value, node = this.root) {
+        if (value === node.data) return -1;
+
+        if (value !== node.data) {
+            const leftDepth = this.depth(value, node.left);
+            const rightDepth = this.depth(value, node.right);
+
+            return Math.max(leftDepth, rightDepth) + 1;
+        }
+
+        if (value < node.data) return this.depth(value, node.left);
+        if (value > node.data) return this.depth(value, node.right);
+    }
 }
+
+//           50
+//         /    \
+//       30      70
+//      /  \    /  \
+//     20   40 60   80
+//    /  \      /
+//   10   25   55
