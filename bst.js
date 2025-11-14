@@ -166,7 +166,7 @@ class Tree {
     }
 
     height (value, node = this.root) {
-        if (value === null) return -1;
+        if (value === null) return null;
 
         if (value === node.data) {
             const leftHeight = this.height(value, node.left);
@@ -180,17 +180,11 @@ class Tree {
     }
 
     depth (value, node = this.root) {
-        if (value === node.data) return -1;
-
-        if (value !== node.data) {
-            const leftDepth = this.depth(value, node.left);
-            const rightDepth = this.depth(value, node.right);
-
-            return Math.max(leftDepth, rightDepth) + 1;
-        }
-
-        if (value < node.data) return this.depth(value, node.left);
-        if (value > node.data) return this.depth(value, node.right);
+        if (value === null) return -1;
+        if (value === node.data) return 0;
+    
+        if (value < node.data) return this.depth(value, node.left) + 1;
+        if (value > node.data) return this.depth(value, node.right) + 1;
     }
 }
 
