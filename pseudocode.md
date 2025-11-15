@@ -1,25 +1,126 @@
-Key Areas to Focus On:
+Sure! Let’s break it down into two parts:
 
-Base Case (value matching node.data):
+Fixing your current height(value) method (so it follows the assignment correctly).
 
-For the height function, we recurse when the value matches the node's data, but that's not quite the case for depth. In the depth method, you should stop recursion when the value matches the node's data because you’ve found the node you're looking for.
+Creating the special helper function for nodeHeight, which will help in the isBalanced method.
 
-In the height function, once you find the node, you compute the height of its subtrees, but in the depth function, once you find the node, you're done. You don't need to compute subtrees—just the depth relative to the root.
+1. Fixing your height(value) Method
 
-Recursive Case (going deeper into the tree):
+First, let's address the small issues in your current height(value) method:
 
-In the height method, after finding the node, you calculate the maximum height of its left and right children. But for the depth method, you should keep track of how many steps you've taken from the root to get to the node.
+Current Issues:
 
-So, when you recurse into the left or right subtree, you should be counting the depth as you go, which means you increment the count each time you move down.
+The height(value) function should return the height of the node with the given value, but it has a few problems:
 
-Direction of Recursion:
+If the value isn't found, it should return null, but currently, your method doesn't return anything in that case.
 
-Your logic for value < node.data and value > node.data is sound; if the value is less than the current node's value, you go left; if it's greater, you go right. However, where you’re going wrong is in the part where you handle the case when you find the node (i.e., value === node.data).
+The recursive calls to this.height(value, node.left) and this.height(value, node.right) are correct in principle, but the logic could be streamlined.
 
-When you find the node, you need to stop recursion and return the current depth. You shouldn’t recurse further when you find the value.
+You're checking if (value === null) at the beginning, which isn’t needed because that would be an error case for input parameters.
 
-The Core Issue:
+Fixed height(value) Method:
 
-In the height function, the recursion continues even after the node is found, and the function checks both left and right subtrees to compute the maximum height. But in the depth function, once the node is found, you're not interested in its children (there’s no need to check left and right subtrees). You should simply return the depth of the node when it matches the value, without further recursion on the children.
+Here’s a corrected version of your height(value) method, focusing on the requirements of the Odin project:
 
-You also don’t need the Math.max(leftDepth, rightDepth) approach here, because you're moving down a single path (either left or right) to find the node.
+height(value, node = this.root) {
+    // Base case: if node is null, return -1 (indicating the height of an empty subtree)
+    if (node === null) return -1;
+
+    // If the current node's data matches the value, calculate the height
+    if (node.data === value) {
+        const leftHeight = this.height(value, node.left);  // height of left subtree
+        const rightHeight = this.height(value, node.right);  // height of right subtree
+        return Math.max(leftHeight, rightHeight) + 1;  // Return the height of the current node
+    }
+
+    // If the value is smaller, search in the left subtree
+    if (value < node.data) return this.height(value, node.left);
+    
+    // If the value is greater, search in the right subtree
+    if (value > node.data) return this.height(value, node.right);
+
+    return null;  // In case the value is not found
+}
+
+Key Changes:
+
+Base case for null: If the current node is null, we return -1 (indicating an empty subtree).
+
+Return value of the correct node height: Once we find the node with the given value, we calculate the height of its left and right subtrees, then return the maximum height of both plus 1.
+
+Recursive traversal: We continue searching for the value in either the left or right subtree, based on whether the current node's value is greater or smaller.
+
+2. Creating the nodeHeight Helper for isBalanced
+
+Now, let's create a helper function that is designed for measuring the height of a subtree starting from a given node, without searching for a value. This helper will be used by isBalanced.
+
+This function will:
+
+Take a node as input.
+
+Recursively calculate the height of its left and right subtrees.
+
+Return the height of the subtree rooted at the given node.
+
+Here’s the helper:
+
+nodeHeight(node) {
+    if (node === null) return -1;  // Return -1 for an empty node/subtree
+
+    // Recursively calculate the height of the left and right subtrees
+    const leftHeight = this.nodeHeight(node.left);
+    const rightHeight = this.nodeHeight(node.right);
+
+    // Return the height of the current node (max height of left/right subtrees + 1)
+    return Math.max(leftHeight, rightHeight) + 1;
+}
+
+Key Points:
+
+Base case: If the node is null, we return -1 (indicating the height of an empty subtree).
+
+Recursion: For each non-null node, the function recursively calculates the height of both the left and right subtrees.
+
+Height calculation: The height of the current node is 1 + the greater of the heights of the left and right subtrees.
+
+Why is this useful for isBalanced?
+
+nodeHeight(node) can be used directly in the isBalanced method because it doesn’t search for a value — it just calculates the height of whatever node is passed to it.
+
+This allows you to check the heights of the left and right subtrees at each node and determine whether the tree is balanced.
+
+How isBalanced Should Look:
+
+Now, let's briefly touch on how you would use the nodeHeight helper inside the isBalanced method:
+
+isBalanced(node = this.root) {
+    if (node === null) return true;  // An empty tree is balanced
+
+    // Get the height of the left and right subtrees
+    const leftHeight = this.nodeHeight(node.left);
+    const rightHeight = this.nodeHeight(node.right);
+
+    // If the difference in height is greater than 1, it's unbalanced
+    if (Math.abs(leftHeight - rightHeight) > 1) return false;
+
+    // Recursively check the left and right subtrees for balance
+    return this.isBalanced(node.left) && this.isBalanced(node.right);
+}
+
+Key Points for isBalanced:
+
+Base case: If the node is null, return true (an empty tree is balanced).
+
+Height difference check: Compare the height of the left and right subtrees. If the difference is greater than 1, return false (the tree is unbalanced).
+
+Recursion: Recursively check the left and right subtrees for balance. Both must be balanced for the whole tree to be balanced.
+
+Summary:
+
+height(value): Fixed to search for the value, then calculate the height of the corresponding node's subtree.
+
+nodeHeight(node): A new helper that calculates the height of a subtree rooted at a given node. This will be used inside isBalanced.
+
+isBalanced: The final method uses nodeHeight to check if the tree is balanced at each node.
+
+Does this make sense now? Would you like to go over any part of this again?

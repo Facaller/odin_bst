@@ -166,7 +166,7 @@ class Tree {
     }
 
     height (value, node = this.root) {
-        if (value === null) return null;
+        if (node === null) return -1;
 
         if (value === node.data) {
             const leftHeight = this.height(value, node.left);
@@ -177,6 +177,7 @@ class Tree {
 
         if (value < node.data) return this.height(value, node.left);
         if (value > node.data) return this.height(value, node.right);
+        return null;
     }
 
     depth (value, node = this.root) {
@@ -185,6 +186,24 @@ class Tree {
     
         if (value < node.data) return this.depth(value, node.left) + 1;
         if (value > node.data) return this.depth(value, node.right) + 1;
+    }
+
+    isBalanced (node = this.root) {
+        if (node.data === null) return true;
+
+        if (node.left || node.right) {
+            const leftSide = this.height(node.left, node.data);
+            const rightSide = this.height(node.right, node.data);
+
+            if ([leftSide - rightSide] > 1) return false;
+            if ([leftSide - rightSide] == 1) return true;
+        }
+
+        if (node.left !== null) {
+            return this.isBalanced(node.left);
+        } else if (node.right !== null) {
+            return this.isBalanced(node.right);
+        }
     }
 }
 
