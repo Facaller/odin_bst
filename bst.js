@@ -170,9 +170,9 @@ class Tree {
 
         if (value === node.data) {
             const leftHeight = this.height(value, node.left);
-            const righttHeight = this.height(value, node.right);
+            const rightHeight = this.height(value, node.right);
 
-            return Math.max(leftHeight, righttHeight) + 1;
+            return Math.max(leftHeight, rightHeight) + 1;
         }
 
         if (value < node.data) return this.height(value, node.left);
@@ -181,29 +181,37 @@ class Tree {
     }
 
     depth (value, node = this.root) {
-        if (value === null) return -1;
+        if (node === null) return null;
         if (value === node.data) return 0;
     
         if (value < node.data) return this.depth(value, node.left) + 1;
         if (value > node.data) return this.depth(value, node.right) + 1;
     }
 
+    heightHelper(node) {
+        if (node === null) return -1;
+    
+        const leftHeight = this.heightHelper(node.left);
+        const rightHeight = this.heightHelper(node.right);
+    
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
     isBalanced (node = this.root) {
-        if (node.data === null) return true;
+        if (node === null) return true;
 
-        if (node.left || node.right) {
-            const leftSide = this.height(node.left, node.data);
-            const rightSide = this.height(node.right, node.data);
+        const leftHeight = this.heightHelper(node.left);
+        const rightHeight = this.heightHelper(node.right);
 
-            if ([leftSide - rightSide] > 1) return false;
-            if ([leftSide - rightSide] == 1) return true;
-        }
+        if (Math.abs(leftHeight - rightHeight) > 1) return false;
 
-        if (node.left !== null) {
-            return this.isBalanced(node.left);
-        } else if (node.right !== null) {
-            return this.isBalanced(node.right);
-        }
+        return this.isBalanced(node.left) && this.isBalanced(node.right);
+    }
+
+    reBalance (node = this.root) {
+        if (node === null) return null;
+
+        
     }
 }
 
