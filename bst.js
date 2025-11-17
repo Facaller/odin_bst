@@ -211,7 +211,14 @@ class Tree {
     reBalance (node = this.root) {
         if (node === null) return null;
 
+        const reBalanceArray = [];
         
+        this.levelOrderForEach(node => {
+            reBalanceArray.push(node.data);
+        });
+        reBalanceArray = this.cleanArray(reBalanceArray);
+        
+        return this.root = this.buildTree(reBalanceArray, 0, reBalanceArray.length - 1);
     }
 }
 
