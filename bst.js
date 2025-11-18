@@ -6,7 +6,7 @@ class Node {
     }
 }
 
-class Tree {
+export class Tree {
     constructor (array) {
         this.array = array;
         this.root  = this.buildTree(this.cleanArray(array), 0, this.cleanArray(array).length - 1);
@@ -211,21 +211,16 @@ class Tree {
     reBalance (node = this.root) {
         if (node === null) return null;
 
-        const reBalanceArray = [];
+        if (!this.isBalanced(node)) {
+            const reBalanceArray = [];
         
-        this.levelOrderForEach(node => {
-            reBalanceArray.push(node.data);
-        });
-        reBalanceArray = this.cleanArray(reBalanceArray);
+            this.levelOrderForEach(node => {
+                reBalanceArray.push(node.data);
+            });
+            reBalanceArray = this.cleanArray(reBalanceArray);
+            
+            return this.root = this.buildTree(reBalanceArray, 0, reBalanceArray.length - 1);
+        }
         
-        return this.root = this.buildTree(reBalanceArray, 0, reBalanceArray.length - 1);
     }
 }
-
-//           50
-//         /    \
-//       30      70
-//      /  \    /  \
-//     20   40 60   80
-//    /  \      /
-//   10   25   55
