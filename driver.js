@@ -17,6 +17,17 @@ export class Driver {
         const tree = this.tree;
         console.log("Created Tree with numbers:", tree.array);
         console.log("Is the tree balanced?", this.tree.isBalanced());
+        console.log("Pre order print:");
+        this.tree.preOrderForEach(node => {
+            console.log(node);
+        });
+        // console.log("");
+        // console.log("");
+        // console.log("");
+        // console.log("");
+        // console.log("");
+        // console.log("");
+        // console.log("");
     }
 }
 
