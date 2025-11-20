@@ -212,7 +212,7 @@ export class Tree {
         if (node === null) return null;
 
         if (!this.isBalanced(node)) {
-            const reBalanceArray = [];
+            let reBalanceArray = [];
         
             this.levelOrderForEach(node => {
                 reBalanceArray.push(node.data);
